@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#0f8b8d"
+    >
+
+    <title>Voice Ledger Lite</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+<main class="app-shell">
+
+
+    <!-- =====================================================
+         Header
+    ====================================================== -->
+
+    <header class="topbar">
+
+        <div>
+
+            <p
+                class="eyebrow"
+                data-i18n="headerEyebrow"
+            >
+                Simple shop ledger
+            </p>
+
+            <h1 id="appTitle">
+                Voice Ledger Lite
+            </h1>
+
+        </div>
+
+
+        <label
+            class="language-label"
+            for="languageSelect"
+        >
+
+            <span class="sr-only">
+                Voice language
+            </span>
+
+            <select
+                id="languageSelect"
+                aria-label="Voice language"
+            >
+
+                <option value="en-IN">
+                    English
+                </option>
+
+                <option value="hi-IN">
+                    हिन्दी
+                </option>
+
+                <option value="gu-IN">
+                    ગુજરાતી
+                </option>
+
+            </select>
+
+        </label>
+
+    </header>
+
+
+    <!-- =====================================================
+         Dashboard
+    ====================================================== -->
+
+    <section
+        class="dashboard"
+        aria-label="Ledger dashboard"
+    >
+
+        <article class="dashboard-card dashboard-card-primary">
+
+            <div class="dashboard-card-icon">
+                ₹
+            </div>
+
+            <div class="dashboard-card-content">
+
+                <p
+                    class="dashboard-label"
+                    data-i18n="totalPending"
+                >
+                    Total pending
+                </p>
+
+                <p
+                    id="dashboardPending"
+                    class="dashboard-value"
+                >
+                    ₹0
+                </p>
+
+            </div>
+
+        </article>
+
+
+        <article class="dashboard-card">
+
+            <div class="dashboard-card-icon dashboard-icon-red">
+                ↑
+            </div>
+
+            <div class="dashboard-card-content">
+
+                <p
+                    class="dashboard-label"
+                    data-i18n="customersWhoOwe"
+                >
+                    Customers who owe
+                </p>
+
+                <p
+                    id="dashboardOwing"
+                    class="dashboard-value"
+                >
+                    0
+                </p>
+
+            </div>
+
+        </article>
+
+
+        <article class="dashboard-card">
+
+            <div class="dashboard-card-icon dashboard-icon-green">
+                ✓
+            </div>
+
+            <div class="dashboard-card-content">
+
+                <p
+                    class="dashboard-label"
+                    data-i18n="settled"
+                >
+                    Settled
+                </p>
+
+                <p
+                    id="dashboardSettled"
+                    class="dashboard-value"
+                >
+                    0
+                </p>
+
+            </div>
+
+        </article>
+
+
+        <article class="dashboard-card">
+
+            <div class="dashboard-card-icon dashboard-icon-blue">
+                #
+            </div>
+
+            <div class="dashboard-card-content">
+
+                <p
+                    class="dashboard-label"
+                    data-i18n="totalCustomers"
+                >
+                    Total customers
+                </p>
+
+                <p
+                    id="dashboardCustomers"
+                    class="dashboard-value"
+                >
+                    0
+                </p>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!-- =====================================================
+         Main Summary
+    ====================================================== -->
+
+    <section
+        class="summary-card"
+        aria-label="Pending total"
+    >
+
+        <div>
+
+            <p
+                id="summaryLabel"
+                class="summary-label"
+                data-i18n="totalUdhaarPending"
+            >
+                Total udhaar pending
+            </p>
+
+            <p
+                id="totalPending"
+                class="summary-amount"
+            >
+                ₹0
+            </p>
+
+        </div>
+
+
+        <span
+            class="summary-dot"
+            aria-hidden="true"
+        ></span>
+
+    </section>
+
+
+    <!-- =====================================================
+         Voice Entry
+    ====================================================== -->
+
+    <section
+        class="voice-panel"
+        aria-label="Add ledger entry"
+    >
+
+        <button
+            id="micButton"
+            class="mic-button"
+            type="button"
+            aria-label="Start voice input"
+        >
+
+            <span
+                class="mic-icon"
+                aria-hidden="true"
+            >
+                🎙
+            </span>
+
+        </button>
+
+
+        <p
+            id="statusLine"
+            class="status-line"
+        >
+            Tap the mic and say:
+            "Jai taken debt of 500"
+        </p>
+
+
+        <div class="fallback-row">
+
+            <input
+                id="textInput"
+                type="text"
+                autocomplete="off"
+                placeholder="Or type: Jai taken debt of 500"
+                aria-label="Type ledger entry"
+            >
+
+            <button
+                id="readButton"
+                class="secondary-button"
+                type="button"
+                data-i18n="readEntry"
+            >
+                Read entry
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         Confirmation Card
+    ====================================================== -->
+
+    <section
+        id="confirmCard"
+        class="confirm-card hidden"
+        aria-labelledby="confirmTitle"
+    >
+
+        <div class="card-heading">
+
+            <div>
+
+                <p
+                    class="eyebrow"
+                    data-i18n="checkBeforeSaving"
+                >
+                    Check before saving
+                </p>
+
+                <h2
+                    id="confirmTitle"
+                    data-i18n="confirmEntry"
+                >
+                    Confirm entry
+                </h2>
+
+            </div>
+
+
+            <button
+                id="cancelButton"
+                class="icon-button"
+                type="button"
+                aria-label="Cancel"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="entryForm">
+
+            <label
+                for="nameInput"
+                data-i18n="name"
+            >
+                Name
+            </label>
+
+            <input
+                id="nameInput"
+                type="text"
+                maxlength="100"
+                required
+            >
+
+
+            <label
+                for="amountInput"
+                data-i18n="amount"
+            >
+                Amount (₹)
+            </label>
+
+            <input
+                id="amountInput"
+                type="number"
+                min="0.01"
+                step="0.01"
+                required
+            >
+
+
+            <label
+                for="typeInput"
+                data-i18n="type"
+            >
+                Type
+            </label>
+
+            <select id="typeInput">
+
+                <option
+                    value="credit"
+                    data-i18n="udhaarGiven"
+                >
+                    Udhaar given
+                </option>
+
+                <option
+                    value="payment"
+                    data-i18n="paymentReceived"
+                >
+                    Payment received
+                </option>
+
+            </select>
+
+
+            <div class="form-actions">
+
+                <button
+                    id="saveButton"
+                    class="primary-button"
+                    type="submit"
+                    data-i18n="save"
+                >
+                    Save
+                </button>
+
+
+                <button
+                    id="cancelButtonBottom"
+                    class="secondary-button"
+                    type="button"
+                    data-i18n="cancel"
+                >
+                    Cancel
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- =====================================================
+         Ledger
+    ====================================================== -->
+
+    <section
+        class="ledger-section"
+        aria-labelledby="ledgerTitle"
+    >
+
+        <div class="section-heading">
+
+            <div>
+
+                <p
+                    class="eyebrow"
+                    data-i18n="customers"
+                >
+                    Customers
+                </p>
+
+                <h2
+                    id="ledgerTitle"
+                    data-i18n="pendingBalances"
+                >
+                    Pending balances
+                </h2>
+
+            </div>
+
+
+            <button
+                id="refreshButton"
+                class="text-button"
+                type="button"
+                data-i18n="refresh"
+            >
+                Refresh
+            </button>
+
+        </div>
+
+
+        <!-- Search -->
+
+        <div class="ledger-tools">
+
+            <label
+                class="search-box"
+                for="customerSearch"
+            >
+
+                <span
+                    class="search-icon"
+                    aria-hidden="true"
+                >
+                    🔍
+                </span>
+
+
+                <span class="sr-only">
+                    Search customers
+                </span>
+
+
+                <input
+                    id="customerSearch"
+                    type="search"
+                    autocomplete="off"
+                    placeholder="Search customer..."
+                    aria-label="Search customer"
+                >
+
+
+                <button
+                    id="clearSearchButton"
+                    class="clear-search-button hidden"
+                    type="button"
+                    aria-label="Clear customer search"
+                >
+                    ×
+                </button>
+
+            </label>
+
+
+            <!-- Filters -->
+
+            <div
+                class="filter-row"
+                role="group"
+                aria-label="Customer filters"
+            >
+
+                <button
+                    class="filter-button active"
+                    type="button"
+                    data-filter="all"
+                    data-i18n="all"
+                >
+                    All
+                </button>
+
+
+                <button
+                    class="filter-button"
+                    type="button"
+                    data-filter="owed"
+                    data-i18n="owes"
+                >
+                    Owes
+                </button>
+
+
+                <button
+                    class="filter-button"
+                    type="button"
+                    data-filter="settled"
+                    data-i18n="settled"
+                >
+                    Settled
+                </button>
+
+            </div>
+
+
+            <!-- Sorting -->
+
+            <div class="sort-row">
+
+                <label
+                    class="sort-label"
+                    for="sortSelect"
+                    data-i18n="sortBy"
+                >
+                    Sort by
+                </label>
+
+
+                <select
+                    id="sortSelect"
+                    class="sort-select"
+                    aria-label="Sort customers"
+                >
+
+                    <option
+                        value="balance-desc"
+                        data-i18n="highestBalance"
+                    >
+                        Highest balance
+                    </option>
+
+                    <option
+                        value="balance-asc"
+                        data-i18n="lowestBalance"
+                    >
+                        Lowest balance
+                    </option>
+
+                    <option
+                        value="name-asc"
+                        data-i18n="nameAZ"
+                    >
+                        Name A → Z
+                    </option>
+
+                    <option
+                        value="name-desc"
+                        data-i18n="nameZA"
+                    >
+                        Name Z → A
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- Customer List -->
+
+        <div
+            id="customerList"
+            class="customer-list"
+            aria-live="polite"
+        ></div>
+
+    </section>
+
+</main>
+
+
+<!-- =========================================================
+     Edit Modal
+========================================================= -->
+
+<div
+    id="editModal"
+    class="modal-overlay hidden"
+    aria-hidden="true"
+>
+
+    <section
+        class="edit-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="editModalTitle"
+    >
+
+        <div class="card-heading">
+
+            <div>
+
+                <p
+                    class="eyebrow"
+                    data-i18n="modifyTransaction"
+                >
+                    Modify transaction
+                </p>
+
+                <h2
+                    id="editModalTitle"
+                    data-i18n="editTransaction"
+                >
+                    Edit transaction
+                </h2>
+
+            </div>
+
+
+            <button
+                id="editModalClose"
+                class="icon-button"
+                type="button"
+                aria-label="Close edit dialog"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="editForm">
+
+            <label
+                for="editAmountInput"
+                data-i18n="amount"
+            >
+                Amount (₹)
+            </label>
+
+            <input
+                id="editAmountInput"
+                type="number"
+                min="0.01"
+                step="0.01"
+                required
+            >
+
+
+            <label
+                for="editTypeInput"
+                data-i18n="type"
+            >
+                Type
+            </label>
+
+            <select id="editTypeInput">
+
+                <option
+                    value="credit"
+                    data-i18n="udhaarGiven"
+                >
+                    Udhaar given
+                </option>
+
+                <option
+                    value="payment"
+                    data-i18n="paymentReceived"
+                >
+                    Payment received
+                </option>
+
+            </select>
+
+
+            <div class="edit-modal-actions">
+
+                <button
+                    id="editSaveButton"
+                    class="primary-button"
+                    type="submit"
+                    data-i18n="saveChanges"
+                >
+                    Save changes
+                </button>
+
+
+                <button
+                    id="editCancelButton"
+                    class="secondary-button"
+                    type="button"
+                    data-i18n="cancel"
+                >
+                    Cancel
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</div>
+
+
+<!-- =========================================================
+     Delete Modal
+========================================================= -->
+
+<div
+    id="deleteModal"
+    class="modal-overlay hidden"
+    aria-hidden="true"
+>
+
+    <section
+        class="delete-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="deleteModalTitle"
+    >
+
+        <div class="delete-modal-heading">
+
+            <div>
+
+                <p
+                    class="eyebrow"
+                    data-i18n="permanentAction"
+                >
+                    Permanent action
+                </p>
+
+                <h2
+                    id="deleteModalTitle"
+                    data-i18n="deleteTransaction"
+                >
+                    Delete transaction
+                </h2>
+
+            </div>
+
+
+            <button
+                id="deleteModalClose"
+                class="icon-button"
+                type="button"
+                aria-label="Close delete confirmation"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="delete-warning">
+
+            <div class="delete-warning-icon">
+                !
+            </div>
+
+
+            <div>
+
+                <strong
+                    data-i18n="areYouSure"
+                >
+                    Are you sure?
+                </strong>
+
+                <p
+                    data-i18n="deleteWarning"
+                >
+                    This transaction will be permanently removed.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="deleteTransactionDetails"
+            class="delete-transaction-details"
+        ></div>
+
+
+        <div class="delete-modal-actions">
+
+            <button
+                id="deleteCancelButton"
+                class="secondary-button"
+                type="button"
+                data-i18n="cancel"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                id="deleteConfirmButton"
+                class="delete-confirm-button"
+                type="button"
+                data-i18n="deleteTransaction"
+            >
+                Delete transaction
+            </button>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- =========================================================
+     Toast
+========================================================= -->
+
+<div
+    id="toast"
+    class="toast"
+    role="status"
+    aria-live="polite"
+></div>
+
+
+<script
+    src="{{ url_for('static', filename='script.js') }}"
+></script>
+
+</body>
+
+</html>

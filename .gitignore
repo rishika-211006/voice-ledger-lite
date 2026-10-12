@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+venv/
+env/
+ENV/
+
+# Flask
+instance/
+
+# SQLite database
+ledger.db
+ledger.db-journal
+ledger.db-shm
+ledger.db-wal
+
+# Backups
+backups/
+
+# IDE / editor files
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test / coverage files
+.pytest_cache/
+.coverage
+htmlcov/
